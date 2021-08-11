@@ -9,10 +9,14 @@ from backlog_google_chat.backlog_google_chat_stack import BacklogGoogleChatStack
 load_dotenv(find_dotenv())
 
 
+stack_name_suffix = os.getenv("STACK_NAME_SUFFIX")
+
+
 app = cdk.App()
 BacklogGoogleChatStack(
     app,
-    "BacklogGoogleChatStack",
+    "BacklogGoogleChatStack"
+    + (f"-{stack_name_suffix}" if stack_name_suffix else ""),
     backlog_base_url=os.environ["BACKLOG_BASE_URL"],
     domain_name=os.getenv("DOMAIN_NAME"),
     certificate_arn=os.getenv("CERTIFICATE_ARN"),
