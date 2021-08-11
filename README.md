@@ -1,58 +1,71 @@
+# Backlog - Google Chat 通知連携
 
-# Welcome to your CDK Python project!
+[Backlog](https://backlog.com) の通知を Google Chat に通知します。
 
-This is a blank project for Python development with CDK.
+## 1. デプロイ
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+通知連携アプリケーションを作成します。
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+### 1.1. 事前準備
 
-To manually create a virtualenv on MacOS and Linux:
+`.env` もしくは環境変数を定義し設定を行います。
+
+- **BACKLOG_BASE_URL**
+  - Backlog スペースのベース URL (例: `https://example.backlog.com`)
+  - 必須 - yes
+- **DOMAIN_NAME**
+  - カスタムドメインを利用する場合の利用ドメイン名 (例: `notification.example.com`)
+  - API Gateway のカスタムドメインに設定されます
+  - 必須 - no (カスタムドメイン利用時は yes)
+- **CERTIFICATE_ARN**
+  - カスタムドメインを利用する場合の ACM 証明書 ARN
+  - API Gateway のカスタムドメインに設定されます
+  - 必須 - no (カスタムドメイン利用時は yes)
+- **HOSTED_ZONE_ID**
+  - Route53 対象ドメインのホストゾーン ID
+  - 同一アカウントで対象ドメインを管理している場合に指定することでレコードを作成できます
+  - 必須 - no
+- **ZONE_NAME**
+  - Route53 対象ドメインのゾーン名
+  - 同一アカウントで対象ドメインを管理している場合に指定することでレコードを作成できます
+  - 必須 - no
+- **LOG_LEVEL**
+  - Lambda Function のログ出力レベル
+  - 必須 - no
+- **SENTRY_DSN**
+  - Sentry 通知用 DSN
+  - 必須 - no
+
+### 1.2. AWS へのデプロイ
+
+CDK でデプロイを行います。
 
 ```
-$ python3 -m venv .venv
+$ cdk deploy
 ```
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+作成された API の URL を控えます。
 
-```
-$ source .venv/bin/activate
-```
+- カスタムドメインを指定しなかった場合
+  - 例: `https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/prod`
+- カスタムドメインを指定した場合
+  - `https://{DOMAIN_NAME}`
+  - 例: `https://notification.example.com`
 
-If you are a Windows platform, you would activate the virtualenv like this:
+## 2. 連携設定
 
-```
-% .venv\Scripts\activate.bat
-```
+### 2.1. Google Chat Webhook URL の取得
 
-Once the virtualenv is activated, you can install the required dependencies.
+Google Chat の通知先に利用したいチャットルームで Webhook URL を取得します。
 
-```
-$ pip install -r requirements.txt
-```
+例: `https://chat.googleapis.com/v1/spaces/AAAAxxxxxxx/messages?key=xxxxxxxx&token=xxxxxxxx`
 
-At this point you can now synthesize the CloudFormation template for this code.
+### 2.2 Backlog への通知設定
 
-```
-$ cdk synth
-```
+通知を設定したいプロジェクトにおいて `プロジェクト設定 > インテグレーション > Webhook` とたどり、以下のように設定します。
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
-
-Enjoy!
+- **Webhook 名** - 任意の値
+- **説明** - 任意の値
+- **WebHook URL** - `{1.2. で控えた URL}/{2.1. で取得した URL の v1 以降}`
+  - 例: `https://xxxxxxxx.execute-api.ap-northeast-1.amazonaws.com/prod/v1/spaces/AAAAxxxxxxx/messages?key=xxxxxxxx&token=xxxxxxxx`
+  - 例: `https://notification.example.com/v1/spaces/AAAAxxxxxxx/messages?key=xxxxxxxx&token=xxxxxxxx`
