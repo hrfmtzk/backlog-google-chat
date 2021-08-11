@@ -14,6 +14,10 @@ BacklogGoogleChatStack(
     app,
     "BacklogGoogleChatStack",
     backlog_base_url=os.environ["BACKLOG_BASE_URL"],
+    domain_name=os.getenv("DOMAIN_NAME"),
+    certificate_arn=os.getenv("CERTIFICATE_ARN"),
+    hosted_zone_id=os.getenv("HOSTED_ZONE_ID"),
+    zone_name=os.getenv("ZONE_NAME"),
     log_level=os.getenv("LOG_LEVEL"),
     sentry_dsn=os.getenv("SENTRY_DSN"),
     env=cdk.Environment(

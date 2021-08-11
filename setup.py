@@ -15,9 +15,12 @@ setuptools.setup(
     packages=setuptools.find_packages(where="backlog_google_chat"),
     install_requires=[
         "aws-cdk.aws-apigateway==1.117.0",
+        "aws-cdk.aws-certificatemanager==1.117.0",
         "aws-cdk.aws-lambda==1.117.0",
         "aws-cdk.aws-lambda-python==1.117.0",
         "aws-cdk.aws-logs==1.117.0",
+        "aws-cdk.aws-route53==1.117.0",
+        "aws-cdk.aws-route53-targets==1.117.0",
         "aws-cdk.core==1.117.0",
         "python-dotenv",
     ],
