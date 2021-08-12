@@ -437,7 +437,16 @@ class TestHandler:
                                 {
                                     "keyValue": {
                                         "topLabel": "詳細",
-                                        "content": "old statement > new statement",  # noqa
+                                        "content": "\n".join(
+                                            [
+                                                "--- ",
+                                                "+++ ",
+                                                "@@ -1 +1 @@",
+                                                "-old statement",
+                                                "+new statement",
+                                                "",
+                                            ]
+                                        ),
                                         "contentMultiline": True,
                                         "icon": "DESCRIPTION",
                                     },
