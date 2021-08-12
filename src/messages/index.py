@@ -1,3 +1,4 @@
+import difflib
 import os
 import typing
 from urllib import parse
@@ -32,6 +33,20 @@ if backlog_base_url.endswith("/"):
 
 google_chat_api = os.environ["GOOGLE_CHAT_API"]
 webhook = WebhookApp()
+
+
+def text_diff(old: str, new: str) -> str:
+    def ensure_newline_end(s: str) -> str:
+        if not s.endswith("\n"):
+            s += "\n"
+        return s
+
+    return "".join(
+        difflib.unified_diff(
+            ensure_newline_end(old).splitlines(keepends=True),
+            ensure_newline_end(new).splitlines(keepends=True),
+        )
+    )
 
 
 @webhook.create_issue
@@ -135,13 +150,22 @@ def update_issue():
             gchat_utils.text_paragraph(content.comment.content),
         )
     for change in content.changes:
-        widgets.append(
-            gchat_utils.key_value(
-                top_label=change.field,
-                content=f"{change.old_value or '--'} > {change.new_value or '--'}",  # noqa
-                icon=gchat_utils.get_icon(change.raw_field_name),
+        if change.raw_field_name == "description":
+            widgets.append(
+                gchat_utils.key_value(
+                    top_label=change.field,
+                    content=text_diff(change.old_value, change.new_value),
+                    icon=gchat_utils.get_icon(change.raw_field_name),
+                )
             )
-        )
+        else:
+            widgets.append(
+                gchat_utils.key_value(
+                    top_label=change.field,
+                    content=f"{change.old_value or '--'} > {change.new_value or '--'}",  # noqa
+                    icon=gchat_utils.get_icon(change.raw_field_name),
+                )
+            )
     for shared_file in content.shared_files:
         widgets.append(
             gchat_utils.key_value(
