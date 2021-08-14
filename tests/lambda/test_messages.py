@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
+from moto import mock_cloudwatch
 from pytest_mock import MockerFixture
 
 
@@ -22,6 +23,10 @@ class LambdaContext:
 class TestHandler:
     @pytest.fixture
     def env(self):
+        os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+        os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+        os.environ["AWS_SECURITY_TOKEN"] = "testing"
+        os.environ["AWS_SESSION_TOKEN"] = "testing"
         os.environ["GOOGLE_CHAT_API"] = "https://api.example.com"
         os.environ["BACKLOG_BASE_URL"] = "https://backlog.com"
         os.environ["POWERTOOLS_TRACE_DISABLED"] = "true"
@@ -35,7 +40,8 @@ class TestHandler:
         sys.path.append(str(root_dir / "src" / "messages"))
         from index import lambda_handler
 
-        yield lambda_handler
+        with mock_cloudwatch():
+            yield lambda_handler
 
         sys.path = original_path
         sys.modules = original_modules

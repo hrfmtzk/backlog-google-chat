@@ -14,6 +14,7 @@ setuptools.setup(
     package_dir={"": "backlog_google_chat"},
     packages=setuptools.find_packages(where="backlog_google_chat"),
     install_requires=[
+        "aws-cdk.assertions==1.117.0",
         "aws-cdk.aws-apigateway==1.117.0",
         "aws-cdk.aws-certificatemanager==1.117.0",
         "aws-cdk.aws-lambda==1.117.0",

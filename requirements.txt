@@ -3,8 +3,10 @@
 black
 flake8
 isort
+moto[all]
 pytest
 pytest-cov
 pytest-mock
+pytest-snapshot
 
 -r src/messages/requirements.txt
