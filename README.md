@@ -1,3 +1,5 @@
+![CDK application test](https://github.com/hrfmtzk/backlog-google-chat/actions/workflows/cdk_app_test.yml/badge.svg?branch=main)
+
 # Backlog - Google Chat 通知連携
 
 [Backlog](https://backlog.com) の通知を Google Chat に通知します。
