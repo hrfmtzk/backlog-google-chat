@@ -1,4 +1,4 @@
-![CDK application test](https://github.com/hrfmtzk/backlog-google-chat/actions/workflows/cdk_app_test.yml/badge.svg?branch=main)
+![CDK application test](https://github.com/hrfmtzk/backlog-google-chat/actions/workflows/cdk_app_test.yml/badge.svg?branch=main) [![codecov](https://codecov.io/gh/hrfmtzk/backlog-google-chat/branch/main/graph/badge.svg?token=HWW91ARAM3)](https://codecov.io/gh/hrfmtzk/backlog-google-chat)
 
 # Backlog - Google Chat 通知連携
 
