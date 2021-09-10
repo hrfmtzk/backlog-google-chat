@@ -1,1 +1,590 @@
-{"Resources": {"FunctionServiceRole675BB04A": {"Type": "AWS::IAM::Role", "Properties": {"AssumeRolePolicyDocument": {"Statement": [{"Action": "sts:AssumeRole", "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}}], "Version": "2012-10-17"}, "ManagedPolicyArns": [{"Fn::Join": ["", ["arn:", {"Ref": "AWS::Partition"}, ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]]}]}}, "Function76856677": {"Type": "AWS::Lambda::Function", "Properties": {"Code": {"S3Bucket": {"Ref": "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3Bucket0F82A4BF"}, "S3Key": {"Fn::Join": ["", [{"Fn::Select": [0, {"Fn::Split": ["||", {"Ref": "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3VersionKeyE353E876"}]}]}, {"Fn::Select": [1, {"Fn::Split": ["||", {"Ref": "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3VersionKeyE353E876"}]}]}]]}}, "Role": {"Fn::GetAtt": ["FunctionServiceRole675BB04A", "Arn"]}, "Environment": {"Variables": {"BACKLOG_BASE_URL": "https://backlog.com", "GOOGLE_CHAT_API": "https://chat.googleapis.com", "LOG_LEVEL": "DEBUG", "POWERTOOLS_SERVICE_NAME": "backlog-google-chat", "SENTRY_DSN": "https://xxxxxxxx.ingest.sentry.io/99999999"}}, "Handler": "index.lambda_handler", "Runtime": "python3.8"}, "DependsOn": ["FunctionServiceRole675BB04A"]}, "FunctionLogRetention5FDF6B4D": {"Type": "Custom::LogRetention", "Properties": {"ServiceToken": {"Fn::GetAtt": ["LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A", "Arn"]}, "LogGroupName": {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "Function76856677"}]]}, "RetentionInDays": 30}}, "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {"Type": "AWS::IAM::Role", "Properties": {"AssumeRolePolicyDocument": {"Statement": [{"Action": "sts:AssumeRole", "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}}], "Version": "2012-10-17"}, "ManagedPolicyArns": [{"Fn::Join": ["", ["arn:", {"Ref": "AWS::Partition"}, ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]]}]}}, "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {"Type": "AWS::IAM::Policy", "Properties": {"PolicyDocument": {"Statement": [{"Action": ["logs:PutRetentionPolicy", "logs:DeleteRetentionPolicy"], "Effect": "Allow", "Resource": "*"}], "Version": "2012-10-17"}, "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB", "Roles": [{"Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"}]}}, "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {"Type": "AWS::Lambda::Function", "Properties": {"Handler": "index.handler", "Runtime": "nodejs14.x", "Code": {"S3Bucket": {"Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5"}, "S3Key": {"Fn::Join": ["", [{"Fn::Select": [0, {"Fn::Split": ["||", {"Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861"}]}]}, {"Fn::Select": [1, {"Fn::Split": ["||", {"Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861"}]}]}]]}}, "Role": {"Fn::GetAtt": ["LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB", "Arn"]}}, "DependsOn": ["LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB", "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"]}, "RestApi0C43BF4B": {"Type": "AWS::ApiGateway::RestApi", "Properties": {"Name": "RestApi"}}, "RestApiCloudWatchRoleE3ED6605": {"Type": "AWS::IAM::Role", "Properties": {"AssumeRolePolicyDocument": {"Statement": [{"Action": "sts:AssumeRole", "Effect": "Allow", "Principal": {"Service": "apigateway.amazonaws.com"}}], "Version": "2012-10-17"}, "ManagedPolicyArns": [{"Fn::Join": ["", ["arn:", {"Ref": "AWS::Partition"}, ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"]]}]}}, "RestApiAccount7C83CF5A": {"Type": "AWS::ApiGateway::Account", "Properties": {"CloudWatchRoleArn": {"Fn::GetAtt": ["RestApiCloudWatchRoleE3ED6605", "Arn"]}}, "DependsOn": ["RestApi0C43BF4B"]}, "RestApiDeployment180EC50358668f89e4c6cd7ebe3f924de35449ed": {"Type": "AWS::ApiGateway::Deployment", "Properties": {"RestApiId": {"Ref": "RestApi0C43BF4B"}, "Description": "Automatically created by the RestApi construct"}, "DependsOn": ["RestApiv1BD03133D", "RestApiv1spacesspaceidmessagesPOST6C88336A", "RestApiv1spacesspaceidmessagesCE7B10B9", "RestApiv1spacesspaceid0DF0A38C", "RestApiv1spaces3106CC3F"]}, "RestApiDeploymentStageprod3855DE66": {"Type": "AWS::ApiGateway::Stage", "Properties": {"RestApiId": {"Ref": "RestApi0C43BF4B"}, "DeploymentId": {"Ref": "RestApiDeployment180EC50358668f89e4c6cd7ebe3f924de35449ed"}, "StageName": "prod"}}, "RestApiv1BD03133D": {"Type": "AWS::ApiGateway::Resource", "Properties": {"ParentId": {"Fn::GetAtt": ["RestApi0C43BF4B", "RootResourceId"]}, "PathPart": "v1", "RestApiId": {"Ref": "RestApi0C43BF4B"}}}, "RestApiv1spaces3106CC3F": {"Type": "AWS::ApiGateway::Resource", "Properties": {"ParentId": {"Ref": "RestApiv1BD03133D"}, "PathPart": "spaces", "RestApiId": {"Ref": "RestApi0C43BF4B"}}}, "RestApiv1spacesspaceid0DF0A38C": {"Type": "AWS::ApiGateway::Resource", "Properties": {"ParentId": {"Ref": "RestApiv1spaces3106CC3F"}, "PathPart": "{space_id}", "RestApiId": {"Ref": "RestApi0C43BF4B"}}}, "RestApiv1spacesspaceidmessagesCE7B10B9": {"Type": "AWS::ApiGateway::Resource", "Properties": {"ParentId": {"Ref": "RestApiv1spacesspaceid0DF0A38C"}, "PathPart": "messages", "RestApiId": {"Ref": "RestApi0C43BF4B"}}}, "RestApiv1spacesspaceidmessagesPOSTApiPermissionBacklogGoogleChatRestApi74A947FFPOSTv1spacesspaceidmessages5897F1BD": {"Type": "AWS::Lambda::Permission", "Properties": {"Action": "lambda:InvokeFunction", "FunctionName": {"Fn::GetAtt": ["Function76856677", "Arn"]}, "Principal": "apigateway.amazonaws.com", "SourceArn": {"Fn::Join": ["", ["arn:", {"Ref": "AWS::Partition"}, ":execute-api:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":", {"Ref": "RestApi0C43BF4B"}, "/", {"Ref": "RestApiDeploymentStageprod3855DE66"}, "/POST/v1/spaces/*/messages"]]}}}, "RestApiv1spacesspaceidmessagesPOSTApiPermissionTestBacklogGoogleChatRestApi74A947FFPOSTv1spacesspaceidmessagesC980B3C5": {"Type": "AWS::Lambda::Permission", "Properties": {"Action": "lambda:InvokeFunction", "FunctionName": {"Fn::GetAtt": ["Function76856677", "Arn"]}, "Principal": "apigateway.amazonaws.com", "SourceArn": {"Fn::Join": ["", ["arn:", {"Ref": "AWS::Partition"}, ":execute-api:", {"Ref": "AWS::Region"}, ":", {"Ref": "AWS::AccountId"}, ":", {"Ref": "RestApi0C43BF4B"}, "/test-invoke-stage/POST/v1/spaces/*/messages"]]}}}, "RestApiv1spacesspaceidmessagesPOST6C88336A": {"Type": "AWS::ApiGateway::Method", "Properties": {"HttpMethod": "POST", "ResourceId": {"Ref": "RestApiv1spacesspaceidmessagesCE7B10B9"}, "RestApiId": {"Ref": "RestApi0C43BF4B"}, "AuthorizationType": "NONE", "Integration": {"IntegrationHttpMethod": "POST", "Type": "AWS_PROXY", "Uri": {"Fn::Join": ["", ["arn:", {"Ref": "AWS::Partition"}, ":apigateway:", {"Ref": "AWS::Region"}, ":lambda:path/2015-03-31/functions/", {"Fn::GetAtt": ["Function76856677", "Arn"]}, "/invocations"]]}}}}, "RestApiDomainNameD6C58297": {"Type": "AWS::ApiGateway::DomainName", "Properties": {"CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "DomainName": "webhook.example.com", "EndpointConfiguration": {"Types": ["EDGE"]}, "SecurityPolicy": "TLS_1_2"}}, "RestApiDomainNameMapBacklogGoogleChatRestApi74A947FF5F55D139": {"Type": "AWS::ApiGateway::BasePathMapping", "Properties": {"DomainName": {"Ref": "RestApiDomainNameD6C58297"}, "RestApiId": {"Ref": "RestApi0C43BF4B"}, "Stage": {"Ref": "RestApiDeploymentStageprod3855DE66"}}}, "ARecordE7B57761": {"Type": "AWS::Route53::RecordSet", "Properties": {"Name": "webhook.example.com.", "Type": "A", "AliasTarget": {"DNSName": {"Fn::GetAtt": ["RestApiDomainNameD6C58297", "DistributionDomainName"]}, "HostedZoneId": {"Fn::GetAtt": ["RestApiDomainNameD6C58297", "DistributionHostedZoneId"]}}, "HostedZoneId": "xxxxxxxxxxxx"}}}, "Parameters": {"AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3Bucket0F82A4BF": {"Type": "String", "Description": "S3 bucket for asset \"5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadec\""}, "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3VersionKeyE353E876": {"Type": "String", "Description": "S3 key for asset version \"5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadec\""}, "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecArtifactHash954F91BF": {"Type": "String", "Description": "Artifact hash for asset \"5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadec\""}, "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5": {"Type": "String", "Description": "S3 bucket for asset \"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\""}, "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": {"Type": "String", "Description": "S3 key for asset version \"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\""}, "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": {"Type": "String", "Description": "Artifact hash for asset \"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\""}}, "Outputs": {"RestApiEndpoint0551178A": {"Value": {"Fn::Join": ["", ["https://", {"Ref": "RestApi0C43BF4B"}, ".execute-api.", {"Ref": "AWS::Region"}, ".", {"Ref": "AWS::URLSuffix"}, "/", {"Ref": "RestApiDeploymentStageprod3855DE66"}, "/"]]}}, "DomainNameAliasDomainName": {"Value": {"Fn::GetAtt": ["RestApiDomainNameD6C58297", "DistributionDomainName"]}}}}
+{
+  "Resources": {
+    "FunctionServiceRole675BB04A": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "Function76856677": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3Bucket0F82A4BF"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3VersionKeyE353E876"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3VersionKeyE353E876"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "FunctionServiceRole675BB04A",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "BACKLOG_BASE_URL": "https://backlog.com",
+            "GOOGLE_CHAT_API": "https://chat.googleapis.com",
+            "LOG_LEVEL": "DEBUG",
+            "POWERTOOLS_SERVICE_NAME": "backlog-google-chat",
+            "SENTRY_DSN": "https://xxxxxxxx.ingest.sentry.io/99999999"
+          }
+        },
+        "Handler": "index.lambda_handler",
+        "Runtime": "python3.8"
+      },
+      "DependsOn": [
+        "FunctionServiceRole675BB04A"
+      ]
+    },
+    "FunctionLogRetention5FDF6B4D": {
+      "Type": "Custom::LogRetention",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn"
+          ]
+        },
+        "LogGroupName": {
+          "Fn::Join": [
+            "",
+            [
+              "/aws/lambda/",
+              {
+                "Ref": "Function76856677"
+              }
+            ]
+          ]
+        },
+        "RetentionInDays": 30
+      }
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "Roles": [
+          {
+            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+          }
+        ]
+      }
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Runtime": "nodejs14.x",
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+      ]
+    },
+    "RestApi0C43BF4B": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "RestApi"
+      }
+    },
+    "RestApiCloudWatchRoleE3ED6605": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "apigateway.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "RestApiAccount7C83CF5A": {
+      "Type": "AWS::ApiGateway::Account",
+      "Properties": {
+        "CloudWatchRoleArn": {
+          "Fn::GetAtt": [
+            "RestApiCloudWatchRoleE3ED6605",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "RestApi0C43BF4B"
+      ]
+    },
+    "RestApiDeployment180EC50358668f89e4c6cd7ebe3f924de35449ed": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        },
+        "Description": "Automatically created by the RestApi construct"
+      },
+      "DependsOn": [
+        "RestApiv1BD03133D",
+        "RestApiv1spacesspaceidmessagesPOST6C88336A",
+        "RestApiv1spacesspaceidmessagesCE7B10B9",
+        "RestApiv1spacesspaceid0DF0A38C",
+        "RestApiv1spaces3106CC3F"
+      ]
+    },
+    "RestApiDeploymentStageprod3855DE66": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        },
+        "DeploymentId": {
+          "Ref": "RestApiDeployment180EC50358668f89e4c6cd7ebe3f924de35449ed"
+        },
+        "StageName": "prod"
+      }
+    },
+    "RestApiv1BD03133D": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "RestApi0C43BF4B",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "v1",
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        }
+      }
+    },
+    "RestApiv1spaces3106CC3F": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "RestApiv1BD03133D"
+        },
+        "PathPart": "spaces",
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        }
+      }
+    },
+    "RestApiv1spacesspaceid0DF0A38C": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "RestApiv1spaces3106CC3F"
+        },
+        "PathPart": "{space_id}",
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        }
+      }
+    },
+    "RestApiv1spacesspaceidmessagesCE7B10B9": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "RestApiv1spacesspaceid0DF0A38C"
+        },
+        "PathPart": "messages",
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        }
+      }
+    },
+    "RestApiv1spacesspaceidmessagesPOSTApiPermissionBacklogGoogleChatRestApi74A947FFPOSTv1spacesspaceidmessages5897F1BD": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Function76856677",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "RestApi0C43BF4B"
+              },
+              "/",
+              {
+                "Ref": "RestApiDeploymentStageprod3855DE66"
+              },
+              "/POST/v1/spaces/*/messages"
+            ]
+          ]
+        }
+      }
+    },
+    "RestApiv1spacesspaceidmessagesPOSTApiPermissionTestBacklogGoogleChatRestApi74A947FFPOSTv1spacesspaceidmessagesC980B3C5": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Function76856677",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "RestApi0C43BF4B"
+              },
+              "/test-invoke-stage/POST/v1/spaces/*/messages"
+            ]
+          ]
+        }
+      }
+    },
+    "RestApiv1spacesspaceidmessagesPOST6C88336A": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "ResourceId": {
+          "Ref": "RestApiv1spacesspaceidmessagesCE7B10B9"
+        },
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "Function76856677",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "RestApiDomainNameD6C58297": {
+      "Type": "AWS::ApiGateway::DomainName",
+      "Properties": {
+        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "DomainName": "webhook.example.com",
+        "EndpointConfiguration": {
+          "Types": [
+            "EDGE"
+          ]
+        },
+        "SecurityPolicy": "TLS_1_2"
+      }
+    },
+    "RestApiDomainNameMapBacklogGoogleChatRestApi74A947FF5F55D139": {
+      "Type": "AWS::ApiGateway::BasePathMapping",
+      "Properties": {
+        "DomainName": {
+          "Ref": "RestApiDomainNameD6C58297"
+        },
+        "RestApiId": {
+          "Ref": "RestApi0C43BF4B"
+        },
+        "Stage": {
+          "Ref": "RestApiDeploymentStageprod3855DE66"
+        }
+      }
+    },
+    "ARecordE7B57761": {
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "Name": "webhook.example.com.",
+        "Type": "A",
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
+              "RestApiDomainNameD6C58297",
+              "DistributionDomainName"
+            ]
+          },
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "RestApiDomainNameD6C58297",
+              "DistributionHostedZoneId"
+            ]
+          }
+        },
+        "HostedZoneId": "xxxxxxxxxxxx"
+      }
+    }
+  },
+  "Parameters": {
+    "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3Bucket0F82A4BF": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadec\""
+    },
+    "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecS3VersionKeyE353E876": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadec\""
+    },
+    "AssetParameters5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadecArtifactHash954F91BF": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"5b3ae8b86fb0510466be82dc6ab373ea9d4193a9fd281035d15ae9beebecadec\""
+    },
+    "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\""
+    },
+    "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\""
+    },
+    "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\""
+    }
+  },
+  "Outputs": {
+    "RestApiEndpoint0551178A": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "RestApi0C43BF4B"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/",
+            {
+              "Ref": "RestApiDeploymentStageprod3855DE66"
+            },
+            "/"
+          ]
+        ]
+      }
+    },
+    "DomainNameAliasDomainName": {
+      "Value": {
+        "Fn::GetAtt": [
+          "RestApiDomainNameD6C58297",
+          "DistributionDomainName"
+        ]
+      }
+    }
+  }
+}

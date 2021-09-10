@@ -42,6 +42,9 @@ class TestApp:
         )
 
         snapshot.assert_match(
-            json.dumps(assertions.Template.from_stack(stack).to_json()),
+            json.dumps(
+                assertions.Template.from_stack(stack).to_json(),
+                indent=2,
+            ),
             "backlog_google_chat_stack.json",
         )
