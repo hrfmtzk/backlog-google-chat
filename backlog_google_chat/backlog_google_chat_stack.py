@@ -41,7 +41,7 @@ class BacklogGoogleChatStack(cdk.Stack):
             entry="src/messages",
             index="index.py",
             handler="lambda_handler",
-            runtime=lambda_.Runtime.PYTHON_3_8,
+            runtime=lambda_.Runtime.PYTHON_3_9,
             environment={
                 "BACKLOG_BASE_URL": backlog_base_url,
                 "GOOGLE_CHAT_API": google_chat_api,
