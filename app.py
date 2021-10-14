@@ -10,6 +10,7 @@ load_dotenv(find_dotenv())
 
 
 stack_name_suffix = os.getenv("STACK_NAME_SUFFIX")
+tags = [kv.split(":", 1) for kv in os.environ.get("AWS_TAGS", "").split(",")]
 
 
 app = cdk.App()
@@ -29,5 +30,8 @@ BacklogGoogleChatStack(
         region=app.region,
     ),
 )
+
+for key, value in tags:
+    cdk.Tags.of(app).add(key, value)
 
 app.synth()
